@@ -1,0 +1,6 @@
+- name: Configure homelab server
+  hosts: homelab
+  become: true
+  roles:
+    - base
+    - ssh

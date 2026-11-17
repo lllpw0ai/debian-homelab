@@ -1,0 +1,15 @@
+- name: Authorize SSH keys
+  ansible.posix.authorized_key:
+    user: "{{ admin_user }}"
+    key: "{{ item }}"
+  loop: "{{ ssh_authorized_keys }}"
+
+- name: Harden SSH (key-only, no root login)
+  ansible.builtin.copy:
+    dest: /etc/ssh/sshd_config.d/10-hardening.conf
+    content: |
+      PasswordAuthentication no
+      KbdInteractiveAuthentication no
+      PermitRootLogin no
+    mode: "0644"
+  notify: Restart ssh

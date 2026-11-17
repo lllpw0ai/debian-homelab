@@ -1,0 +1,41 @@
+- name: Install base packages
+  ansible.builtin.apt:
+    name: "{{ base_packages }}"
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Never sleep or suspend (it's a server)
+  ansible.builtin.systemd_service:
+    name: "{{ item }}"
+    masked: true
+  loop:
+    - sleep.target
+    - suspend.target
+    - hibernate.target
+    - hybrid-sleep.target
+
+- name: Disable Wi-Fi power saving (applies on next reboot)
+  ansible.builtin.copy:
+    dest: /etc/NetworkManager/conf.d/wifi-powersave-off.conf
+    content: |
+      [connection]
+      wifi.powersave = 2
+    mode: "0644"
+
+- name: Enable automatic security updates
+  ansible.builtin.copy:
+    dest: /etc/apt/apt.conf.d/20auto-upgrades
+    content: |
+      APT::Periodic::Update-Package-Lists "1";
+      APT::Periodic::Unattended-Upgrade "1";
+    mode: "0644"
+
+- name: Auto-reboot after updates that need it
+  ansible.builtin.copy:
+    dest: /etc/apt/apt.conf.d/52homelab-reboot
+    content: |
+      Unattended-Upgrade::Automatic-Reboot "true";
+      Unattended-Upgrade::Automatic-Reboot-Time "{{ auto_reboot_time }}";
+    mode: "0644"
+  when: auto_reboot

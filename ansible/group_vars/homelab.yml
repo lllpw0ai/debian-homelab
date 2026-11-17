@@ -1,0 +1,19 @@
+admin_user: llpw0ai
+
+base_packages:
+  - openssh-server
+  - unattended-upgrades
+  - apt-listchanges
+  - ca-certificates
+  - curl
+  - git
+  - dnsutils
+  - intel-gpu-tools
+  - restic
+  - rclone
+
+auto_reboot: true
+auto_reboot_time: "04:30"
+
+ssh_authorized_keys:
+  - "{{ lookup('file', '~/.ssh/id_ed25519.pub') }}"
