@@ -1,0 +1,8 @@
+[Unit]
+Description=Homelab backup (restic to Google Drive)
+Wants=network-online.target
+After=network-online.target docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/home/llpw0ai/homelab/scripts/backup.sh

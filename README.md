@@ -23,3 +23,10 @@ Self-hosted services running on a Lenovo ThinkCentre M920q.
 ## Layout
 Each service lives in its own folder with a `compose.yaml`.
 Runtime data (`config/`, `cache/`) is excluded from Git.
+
+## Backups
+Nightly encrypted, deduplicated backups with **restic** to Google Drive (via rclone),
+scheduled by a **systemd timer** (`scripts/homelab-backup.timer`).
+Containers are stopped during the backup for consistent databases.
+Retention: 7 daily, 4 weekly, 6 monthly. Failures alert to my phone via ntfy.
+Restores are tested.
