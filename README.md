@@ -12,6 +12,7 @@ Self-hosted services running on a Lenovo ThinkCentre M920q.
 - **OS:** Debian 13 (trixie)
 - **Containers:** Docker + Docker Compose
 - **Remote access:** Tailscale, SSH (key-only, root login disabled)
+- **Updates:** unattended-upgrades (automatic Debian security patches)
 
 ## Services
 | Service    | Purpose                         | Port |
