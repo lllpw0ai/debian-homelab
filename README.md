@@ -18,6 +18,7 @@ Self-hosted services running on a Lenovo ThinkCentre M920q.
 |------------|---------------------------------|------|
 | Technitium | DNS server + network ad blocking | 53, 5380 |
 | Jellyfin   | Media server (Intel QSV hardware transcoding) | 8096 |
+| Uptime Kuma | Service monitoring + phone alerts (ntfy) | 3001 |
 
 ## Layout
 Each service lives in its own folder with a `compose.yaml`.
