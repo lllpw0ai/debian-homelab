@@ -1,0 +1,56 @@
+- name: Create rclone config folder
+  ansible.builtin.file:
+    path: /root/.config/rclone
+    state: directory
+    mode: "0700"
+
+# force: false = only on a fresh install. rclone refreshes its own login
+# token over time, so overwriting the file on every run would undo that.
+- name: Install Google Drive connection (rclone)
+  ansible.builtin.copy:
+    src: rclone.conf
+    dest: /root/.config/rclone/rclone.conf
+    mode: "0600"
+    force: false
+
+- name: Install restic password
+  ansible.builtin.copy:
+    content: "{{ restic_password }}\n"
+    dest: /root/.restic-pass
+    mode: "0600"
+  no_log: true
+  diff: false
+
+- name: Install backup settings
+  ansible.builtin.copy:
+    content: |
+      export RESTIC_REPOSITORY="{{ restic_repository }}"
+      export RESTIC_PASSWORD_FILE="/root/.restic-pass"
+      export NTFY_TOPIC="{{ ntfy_topic }}"
+    dest: /root/.restic.env
+    mode: "0600"
+  no_log: true
+  diff: false
+
+- name: Make the backup script executable
+  ansible.builtin.file:
+    path: "{{ homelab_dir }}/scripts/backup.sh"
+    mode: "0755"
+
+- name: Install backup systemd units from the repo
+  ansible.builtin.copy:
+    src: "{{ homelab_dir }}/scripts/{{ item }}"
+    dest: "/etc/systemd/system/{{ item }}"
+    remote_src: true
+    mode: "0644"
+  loop:
+    - homelab-backup.service
+    - homelab-backup.timer
+  register: backup_units
+
+- name: Enable the nightly backup timer
+  ansible.builtin.systemd_service:
+    name: homelab-backup.timer
+    enabled: true
+    state: started
+    daemon_reload: "{{ backup_units.changed }}"

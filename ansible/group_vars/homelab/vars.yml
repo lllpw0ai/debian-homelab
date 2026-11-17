@@ -28,3 +28,7 @@ media_dirs:
   - /srv/media/movies
   - /srv/media/shows
   - /srv/media/music
+
+restic_repository: "rclone:gdrive:homelab-backups"
+restic_password: "{{ vault_restic_password }}"
+ntfy_topic: "{{ vault_ntfy_topic }}"
