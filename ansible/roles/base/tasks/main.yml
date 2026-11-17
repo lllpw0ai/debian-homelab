@@ -1,9 +1,49 @@
+- name: Use Debian's official online package sources
+  ansible.builtin.copy:
+    dest: /etc/apt/sources.list.d/debian.sources
+    content: |
+      Types: deb
+      URIs: https://deb.debian.org/debian
+      Suites: {{ ansible_facts['distribution_release'] }} {{ ansible_facts['distribution_release'] }}-updates
+      Components: main contrib non-free non-free-firmware
+      Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+
+      Types: deb
+      URIs: https://security.debian.org/debian-security
+      Suites: {{ ansible_facts['distribution_release'] }}-security
+      Components: main contrib non-free non-free-firmware
+      Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+    mode: "0644"
+  register: apt_sources
+
+- name: Remove the old-style sources list (installer leftovers, e.g. the install disc)
+  ansible.builtin.file:
+    path: /etc/apt/sources.list
+    state: absent
+  register: old_sources
+
+- name: Refresh package lists after changing sources
+  ansible.builtin.apt:
+    update_cache: true
+  when: apt_sources.changed or old_sources.changed
+
+- name: Install packages Ansible itself needs
+  ansible.builtin.apt:
+    name: python3-debian
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
 - name: Install base packages
   ansible.builtin.apt:
     name: "{{ base_packages }}"
     state: present
-    update_cache: true
-    cache_valid_time: 3600
+
+- name: Install Intel GPU tools (x86 machines only)
+  ansible.builtin.apt:
+    name: intel-gpu-tools
+    state: present
+  when: ansible_facts['architecture'] == 'x86_64'
 
 - name: Never sleep or suspend (it's a server)
   ansible.builtin.systemd_service:
@@ -14,6 +54,12 @@
     - suspend.target
     - hibernate.target
     - hybrid-sleep.target
+
+- name: Make sure NetworkManager's config folder exists
+  ansible.builtin.file:
+    path: /etc/NetworkManager/conf.d
+    state: directory
+    mode: "0755"
 
 - name: Disable Wi-Fi power saving (applies on next reboot)
   ansible.builtin.copy:

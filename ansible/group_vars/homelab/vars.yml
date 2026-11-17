@@ -8,7 +8,6 @@ base_packages:
   - curl
   - git
   - dnsutils
-  - intel-gpu-tools
   - restic
   - rclone
 
