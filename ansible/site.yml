@@ -2,8 +2,9 @@
   hosts: homelab
   become: true
   roles:
-    - { role: base,     tags: base }
-    - { role: ssh,      tags: ssh }
-    - { role: docker,   tags: docker }
-    - { role: services, tags: services }
-    - { role: backups,  tags: backups }
+    - { role: base,      tags: base }
+    - { role: ssh,       tags: ssh }
+    - { role: tailscale, tags: tailscale }
+    - { role: docker,    tags: docker }
+    - { role: services,  tags: services }
+    - { role: backups,   tags: backups }

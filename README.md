@@ -48,6 +48,7 @@ fresh Debian install with one command, run from my laptop:
 |------|--------------|
 | base | Debian package sources, base packages, automatic security updates, never sleep |
 | ssh | Authorized keys, key-only login, root login disabled |
+| tailscale | Installs Tailscale and joins the tailnet (auth key in Vault) |
 | docker | Docker Engine + Compose from Docker's official repository |
 | services | Media folders, per-machine settings (`.env`), starts every Compose stack |
 | backups | restic + rclone setup, nightly systemd timer |
