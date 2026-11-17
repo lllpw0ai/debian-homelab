@@ -1,0 +1,13 @@
+services:
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    environment:
+      - DOMAIN=${VW_DOMAIN}
+      - SIGNUPS_ALLOWED=${VW_SIGNUPS_ALLOWED:-false}
+      - TZ=America/New_York
+    volumes:
+      - ./data:/data
+    ports:
+      - "172.17.0.1:8222:80"   # internal only; reached through Tailscale Serve (HTTPS)
+    restart: unless-stopped

@@ -43,6 +43,26 @@
     group: "{{ admin_user }}"
     mode: "0644"
 
+
+- name: Write Vaultwarden's address (.env)
+  ansible.builtin.copy:
+    dest: "{{ homelab_dir }}/vaultwarden/.env"
+    content: |
+      VW_DOMAIN={{ vaultwarden_domain }}
+    owner: "{{ admin_user }}"
+    group: "{{ admin_user }}"
+    mode: "0644"
+
+- name: Check Tailscale HTTPS (Serve) setup
+  ansible.builtin.command: tailscale serve status --json
+  register: tailscale_serve
+  changed_when: false
+  check_mode: false
+
+- name: Serve Vaultwarden over HTTPS on the tailnet
+  ansible.builtin.command: tailscale serve --bg http://172.17.0.1:8222
+  when: "'172.17.0.1:8222' not in tailscale_serve.stdout"
+
 - name: Start every service
   community.docker.docker_compose_v2:
     project_src: "{{ homelab_dir }}/{{ item }}"

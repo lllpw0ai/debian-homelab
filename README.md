@@ -19,6 +19,7 @@ Self-hosted services running on a Lenovo ThinkCentre M920q.
 |------------|---------------------------------|------|
 | Technitium | DNS server + network ad blocking | 53, 5380 |
 | Jellyfin   | Media server (Intel QSV hardware transcoding) | 8096 |
+| Vaultwarden | Password manager (Bitwarden-compatible), HTTPS via Tailscale Serve | tailnet only |
 | Uptime Kuma | Service monitoring + phone alerts (ntfy) | 3001 |
 
 ## Layout

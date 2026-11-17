@@ -23,6 +23,7 @@ homelab_services:
   - technitium
   - jellyfin
   - uptime-kuma
+  - vaultwarden
 media_dirs:
   - /srv/media/movies
   - /srv/media/shows
@@ -32,3 +33,4 @@ restic_repository: "rclone:gdrive:homelab-backups"
 restic_password: "{{ vault_restic_password }}"
 ntfy_topic: "{{ vault_ntfy_topic }}"
 tailscale_authkey: "{{ vault_tailscale_authkey }}"
+vaultwarden_domain: "https://tail67e86b.ts.net"
