@@ -1,0 +1,50 @@
+- name: Create media folders
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ admin_user }}"
+    group: "{{ admin_user }}"
+    mode: "0755"
+  loop: "{{ media_dirs }}"
+
+- name: Download the homelab repo (fresh installs only)
+  ansible.builtin.command: git clone {{ homelab_repo }} {{ homelab_dir }}
+  args:
+    creates: "{{ homelab_dir }}/.git"
+  become_user: "{{ admin_user }}"
+
+- name: Create Jellyfin data folders owned by the admin user
+  ansible.builtin.file:
+    path: "{{ homelab_dir }}/jellyfin/{{ item }}"
+    state: directory
+    owner: "{{ admin_user }}"
+    group: "{{ admin_user }}"
+    mode: "0755"
+  loop: [config, cache]
+
+- name: Look up the admin user's IDs
+  ansible.builtin.getent:
+    database: passwd
+    key: "{{ admin_user }}"
+
+- name: Look up the render group (GPU access)
+  ansible.builtin.getent:
+    database: group
+    key: render
+
+- name: Write Jellyfin's machine-specific settings (.env)
+  ansible.builtin.copy:
+    dest: "{{ homelab_dir }}/jellyfin/.env"
+    content: |
+      PUID={{ ansible_facts.getent_passwd[admin_user][1] }}
+      PGID={{ ansible_facts.getent_passwd[admin_user][2] }}
+      RENDER_GID={{ ansible_facts.getent_group['render'][1] }}
+    owner: "{{ admin_user }}"
+    group: "{{ admin_user }}"
+    mode: "0644"
+
+- name: Start every service
+  community.docker.docker_compose_v2:
+    project_src: "{{ homelab_dir }}/{{ item }}"
+    state: present
+  loop: "{{ homelab_services }}"

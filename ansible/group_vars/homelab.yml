@@ -17,3 +17,14 @@ auto_reboot_time: "04:30"
 
 ssh_authorized_keys:
   - "{{ lookup('file', '~/.ssh/id_ed25519.pub') }}"
+
+homelab_dir: "/home/{{ admin_user }}/homelab"
+homelab_repo: https://github.com/lllpw0ai/debian-homelab.git
+homelab_services:
+  - technitium
+  - jellyfin
+  - uptime-kuma
+media_dirs:
+  - /srv/media/movies
+  - /srv/media/shows
+  - /srv/media/music
