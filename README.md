@@ -37,3 +37,21 @@ Restores are tested.
   Instead, Technitium is pushed to every Tailscale device as its DNS server
   (Tailscale "Override DNS servers"), so ad blocking works at home and away.
 - The server is Wi-Fi only; Wi-Fi power saving is disabled to prevent dropouts.
+
+## Automation (Ansible)
+The entire server is defined as code in `ansible/` and can be rebuilt from a
+fresh Debian install with one command, run from my laptop:
+
+    cd ansible && ansible-playbook site.yml
+
+| Role | What it does |
+|------|--------------|
+| base | Debian package sources, base packages, automatic security updates, never sleep |
+| ssh | Authorized keys, key-only login, root login disabled |
+| docker | Docker Engine + Compose from Docker's official repository |
+| services | Media folders, per-machine settings (`.env`), starts every Compose stack |
+| backups | restic + rclone setup, nightly systemd timer |
+
+- Secrets (restic password, Google Drive token, ntfy topic) are encrypted with **Ansible Vault**.
+- Playbooks are idempotent: a second run reports `changed=0`.
+- Tested by rebuilding a fresh Debian 13 virtual machine (UTM) from scratch.
