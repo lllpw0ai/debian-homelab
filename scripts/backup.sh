@@ -7,6 +7,7 @@ HOMELAB="/home/llpw0ai/homelab"
 
 compose_all() {   # run "docker compose <action>" in every service folder
   for f in "$HOMELAB"/*/compose.yaml; do
+    [[ "$f" == */technitium/* ]] && continue
     docker compose -f "$f" "$1" || true
   done
 }
