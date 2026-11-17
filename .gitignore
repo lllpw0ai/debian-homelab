@@ -1,0 +1,8 @@
+# Service data - never commit
+config/
+cache/
+data/
+
+# Secrets
+.env
+*.env
